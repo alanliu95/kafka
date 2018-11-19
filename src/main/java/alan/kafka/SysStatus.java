@@ -1,18 +1,55 @@
 package alan.kafka;
 
 import java.util.*;
+
+import org.codehaus.jackson.map.ObjectMapper;
+
 import java.text.*;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class SysStatus {
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public void setCpuUsage(float cpuUsage) {
+		this.cpuUsage = cpuUsage;
+	}
+	public void setMemUsage(float memUsage) {
+		this.memUsage = memUsage;
+	}
+	private String date;
+	private float cpuUsage;
+	private float memUsage;
+	public SysStatus() {
+		this.date = null;
+		this.cpuUsage = 0;
+		this.memUsage = 0;
+	}
 	public static void  main(String Args[]){
 		//SysStatus.getCpuUsage();
 		//SysStatus.getMemUsage();
-		SysStatus.getStatus();
+		String jsonStr=" ";
+		SysStatus s=new SysStatus();
+		s.getStatus();
+		
+		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+		try {
+			jsonStr=mapper.writeValueAsString(s);
+			System.out.println(s);
+		} catch (IOException e) {
+			// e.printStackTrace();
+			System.out.println("json format error");
+			return;
+		}
+		
+		
 	}
-	public static String getStatus() {
-		float cpuUsage = 0;
+	public void getStatus(){
 		float idleUsage = 0;
 		Runtime rt = Runtime.getRuntime();	
 		String[] cpuCmd = { "/bin/sh", "-c","top -b -n 1 | sed -n '3p' | awk '{print $8}'" };
@@ -24,35 +61,32 @@ public class SysStatus {
 			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			str = in.readLine();
 			}catch(Exception e){
-			
+				e.printStackTrace();
 		}
 		idleUsage = Float.parseFloat(str);
 //		System.out.println(idleUsage);
 		cpuUsage = 100 - idleUsage;
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-		String date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
-		System.out.println(date);
-		System.out.println("CpuUsage:"+cpuUsage);
+		date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
+//		System.out.println(date);
+//		System.out.println("CpuUsage:"+cpuUsage);
 		
 		long memUsed = 0;
 		long memTotal = 0;
-		float memUsage = 0;
-		
+	
 		try{
 			Process p = rt.exec(memCmd);
 			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			str = in.readLine();
 		}catch(Exception e){
-			
+			e.printStackTrace();
 		}
 		
 		String[] mems = str.split(" ");
 		memTotal = Long.parseLong(mems[0]);
 		memUsed = Long.parseLong(mems[1]);
 		memUsage = (float) memUsed / memTotal * 100;
-		System.out.println("MemUsage:"+memUsage);
-		return "hello";
-		
+		System.out.println("MemUsage:"+memUsage);		
 	}
 	public static float getCpuUsage() {
 		float cpuUsage = 0;
