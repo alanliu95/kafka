@@ -6,13 +6,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.text.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class SysStatus {
-	public String getDate() {
-		return date;
-	}
+	private String date;
+	private float cpuUsage;
+	private float memUsage;
+
 	public void setDate(String date) {
 		this.date = date;
 	}
@@ -22,34 +24,42 @@ public class SysStatus {
 	public void setMemUsage(float memUsage) {
 		this.memUsage = memUsage;
 	}
-	private String date;
-	private float cpuUsage;
-	private float memUsage;
+
+	public String getDate() {
+		return date;
+	}
+	public float getCpuUsage() {
+		return cpuUsage;
+	}
+	public float getMemUsage() {
+		return memUsage;
+	}
 	public SysStatus() {
-		this.date = null;
-		this.cpuUsage = 0;
-		this.memUsage = 0;
+		this.date = "test";
+		this.cpuUsage = 100;
+		this.memUsage = 100;
 	}
 	public static void  main(String Args[]){
 		//SysStatus.getCpuUsage();
 		//SysStatus.getMemUsage();
 		String jsonStr=" ";
 		SysStatus s=new SysStatus();
-		s.getStatus();
+		s.readStatus();
 		
 		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 		try {
 			jsonStr=mapper.writeValueAsString(s);
-			System.out.println(s);
+			System.out.println(jsonStr);
 		} catch (IOException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("json format error");
 			return;
-		}
-		
-		
+		}		
 	}
-	public void getStatus(){
+	
+
+	
+	public void readStatus(){
 		float idleUsage = 0;
 		Runtime rt = Runtime.getRuntime();	
 		String[] cpuCmd = { "/bin/sh", "-c","top -b -n 1 | sed -n '3p' | awk '{print $8}'" };
@@ -88,7 +98,7 @@ public class SysStatus {
 		memUsage = (float) memUsed / memTotal * 100;
 		System.out.println("MemUsage:"+memUsage);		
 	}
-	public static float getCpuUsage() {
+	public static float readCpuUsage() {
 		float cpuUsage = 0;
 		float idleUsage = 0;
 		Runtime rt = Runtime.getRuntime();
@@ -115,7 +125,7 @@ public class SysStatus {
 		return cpuUsage;
 	}
 	
-	public static void getCPUMEMByPID(){
+	public static void readCPUMEMByPID(){
 		Runtime rt = Runtime.getRuntime();
 		String[] cmd = { "/bin/sh", "-c","top -b -n 1 | sed -n '3p' | awk '{print $0}'"};
 		BufferedReader in = null;
@@ -129,7 +139,7 @@ public class SysStatus {
 		}
 	}
 	
-	public static float getMemUsage() {
+	public static float readMemUsage() {
 		long memUsed = 0;
 		long memTotal = 0;
 		float memUsage = 0;
