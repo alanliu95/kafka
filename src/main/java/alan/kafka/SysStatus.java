@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class SysStatus {
-	private String date;
+	private String ts;
 	private float cpuUsage;
 	private float memUsage;
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setts(String date) {
+		this.ts = date;
 	}
 	public void setCpuUsage(float cpuUsage) {
 		this.cpuUsage = cpuUsage;
@@ -25,8 +25,8 @@ public class SysStatus {
 		this.memUsage = memUsage;
 	}
 
-	public String getDate() {
-		return date;
+	public String getts() {
+		return ts;
 	}
 	public float getCpuUsage() {
 		return cpuUsage;
@@ -35,7 +35,7 @@ public class SysStatus {
 		return memUsage;
 	}
 	public SysStatus() {
-		this.date = "test";
+		this.ts = "test";
 		this.cpuUsage = 100;
 		this.memUsage = 100;
 	}
@@ -77,7 +77,7 @@ public class SysStatus {
 //		System.out.println(idleUsage);
 		cpuUsage = 100 - idleUsage;
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-		date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
+		ts = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
 //		System.out.println(date);
 //		System.out.println("CpuUsage:"+cpuUsage);
 		
