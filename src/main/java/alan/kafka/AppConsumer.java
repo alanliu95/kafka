@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.*;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class AppConsumer {
+	
 	public static void main(String[] args) {
 		Properties props = new Properties();
 		props.put("bootstrap.servers", "alannnn.tpddns.cn:9092");
@@ -36,8 +37,8 @@ public class AppConsumer {
 			for (ConsumerRecord<String, String> record : records) {
 				System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
 				try {
-				SysStatus json = mapper.readValue(record.value(), SysStatus.class);
-				mysql.insertRecord(json);
+					LinuxStatus json = mapper.readValue(record.value(), LinuxStatus.class);
+					mysql.insertRecord(json);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

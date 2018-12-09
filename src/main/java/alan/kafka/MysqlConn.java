@@ -91,7 +91,7 @@ public class MysqlConn {
 		}
 	}
 
-	public void insertRecord(SysStatus record) {
+	public void insertRecord(LinuxStatus record) {
 		PreparedStatement psql;
 		// 预处理添加数据，其中有两个参数--“？”
 		try {
