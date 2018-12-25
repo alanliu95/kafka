@@ -10,7 +10,8 @@ tmp/
 .project
 .classpath
 .loadpath
-
+##vscode
+.vscode/
 ## External tool builders
 .externalToolBuilders/
 

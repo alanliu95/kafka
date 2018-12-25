@@ -33,11 +33,11 @@ public class MysqlConn {
 			Class.forName(driver);
 			// 1.getConnection()方法，连接MySQL数据库！！
 			con = DriverManager.getConnection(url, user, password);
-			if (!con.isClosed())
-				System.out.println("Succeeded connecting to the Database!");
+//			if (!con.isClosed())
+//				System.out.println("Succeeded connecting to the Database!");
 		} catch (ClassNotFoundException e) {
 			// 数据库驱动类异常处理
-			System.out.println("Sorry,can`t find the Driver!");
+			System.out.println("can`t find the Driver!");
 			e.printStackTrace();
 		} catch (SQLException e) {
 			// 数据库连接失败异常处理
@@ -46,7 +46,7 @@ public class MysqlConn {
 			// TODO: handle exception
 			e.printStackTrace();
 		} finally {
-			System.out.println("数据库数据成功获取！！");
+			System.out.println("connection succeed");
 		}
 	}
 
