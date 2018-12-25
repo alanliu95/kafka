@@ -1,6 +1,6 @@
 package alan.kafka;
 
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -13,52 +13,81 @@ import org.apache.logging.log4j.Logger;
 public class AppProducer implements Callback {
 	private static final Logger logger = LogManager.getLogger(AppProducer.class);
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-
-		SysStatus s = new SimStatus();
-		ObjectMapper mapper = new ObjectMapper();
+	public static void main(String[] args){
 		Properties props = new Properties();
-
-//		props.put("bootstrap.servers", "alannnn.tpddns.cn:9092");
-//		props.put("acks", "all");
-//		props.put("retries", 1);
-//		props.put("batch.size", 16384);
-//		props.put("linger.ms", 1);
-//		props.put("buffer.memory", 33554432);
-//		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-//		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-		 props.load(AppProducer.class.getResourceAsStream("/producer.properties"));
-		 logger.info("properties:" + props);
-		 logger.info("topic:" + props.getProperty("topic"));
+		InputStream in = AppProducer.class.getResourceAsStream("/producer.properties");
+		if (in == null) {
+			logger.error("could find producer.propeties");
+			System.exit(-1);
+		}
+		try {
+			props.load(in);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error("producer.propeties contains errors");
+			System.exit(-1);			
+		}
+		int interval = 0;
+		try {
+			interval = Integer.parseInt(props.getProperty("interval"));
+		} catch (NumberFormatException e) {
+			logger.error("interval field is unavailable");
+			System.exit(-1);
+		}
+		String deviceId = props.getProperty("device.id");
+		if (deviceId == null) {
+			logger.error("miss deviceId field");
+			System.exit(-1);
+		}
+		SysStatus sysStatus = new SimStatus(deviceId);
+		ObjectMapper mapper = new ObjectMapper();
+		logger.info("properties:" + props);
+		// logger.info("topic:" + props.getProperty("topic"));
 		Producer<String, String> producer = new KafkaProducer<>(props);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				logger.info("Shuting down ...");
+				logger.info("shut down,clear the resourses");
 				producer.close();
 			}
 		});
 		ProducerRecord<String, String> record;
-
 		int key = 0;
 		String jsonStr;
+		AppProducer app = new AppProducer();
 		while (true) {
-			s.readStatus();
-			jsonStr = mapper.writeValueAsString(s);
-			logger.info("message:" + jsonStr);
-			record = new ProducerRecord<String, String>(props.getProperty("topic"), Integer.toString(key), jsonStr);
-			producer.send(record, new AppProducer());
-			// getThreadInfo();
-			key++;
-			Thread.sleep(3000);
+			
+			sysStatus.readStatus();
+			try {
+				jsonStr = mapper.writeValueAsString(sysStatus);
+				logger.debug("message:" + jsonStr);
+				record = new ProducerRecord<String, String>(props.getProperty("topic"), Integer.toString(key), jsonStr);
+				producer.send(record, app);
+				// getThreadInfo();
+				key++;
+				Thread.sleep(interval);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.info("json-formatting failed");
+				System.exit(-1);
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+				logger.info("process was interrupted");
+				System.exit(-1);
+			}
+
 		}
 	}
+
+	@SuppressWarnings("unused")
 	private static String transferLongToDate(Long millSec) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(millSec);
 		return sdf.format(date);
 	}
 
+	@SuppressWarnings("unused")
 	private static void getThreadInfo() {
 		ThreadGroup currentGroup = Thread.currentThread().getThreadGroup();
 		while (currentGroup.getParent() != null) {
@@ -80,12 +109,13 @@ public class AppProducer implements Callback {
 
 	public void onCompletion(RecordMetadata metadata, Exception e) {
 		if (e != null) {
+			logger.error("failed to send the message");
 			e.printStackTrace();
-			System.exit(-1);
+			System.exit(-1); // 出现异常退出
 		} else {
 			// getThreadInfo();
 			logger.debug("message was sent");
-			logger.debug("The offset of the record we just sent is: " + metadata.offset());
+			logger.debug("The partition offset of the record sent: " + metadata.offset());
 		}
 	}
 

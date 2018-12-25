@@ -21,7 +21,7 @@ public class AppConsumer {
 			public void run() {
 				try {
 					Thread.sleep(200);
-					System.out.println("Shouting down ...");
+					System.out.println("Shuting down ...");
 					// some cleaning up code...
 					consumer.close();
 					mysql.disconn();

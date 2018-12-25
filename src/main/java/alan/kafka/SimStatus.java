@@ -1,18 +1,28 @@
 package alan.kafka;
 
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 public class SimStatus implements SysStatus {
+	private String deviceId;
 	private String ts;
 	private float cpuUsage;
 	private float memUsage;
 	private Random ra;
+	public SimStatus(String deviceId) {
+		this.deviceId=deviceId;
+		this.ts = "test";
+		this.cpuUsage = 100;
+		this.memUsage = 100;
+		this.ra =new Random();	
+	}
+	public String getDeviceId() {
+		return deviceId;
+	}
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
 	public void setts(String date) {
 		this.ts = date;
 	}
@@ -31,31 +41,7 @@ public class SimStatus implements SysStatus {
 	}
 	public float getMemUsage() {
 		return memUsage;
-	}
-	public SimStatus() {
-		this.ts = "test";
-		this.cpuUsage = 100;
-		this.memUsage = 100;
-		this.ra =new Random();
-	}
-	public static void  main(String Args[]){
-		//SysStatus.getCpuUsage();
-		//SysStatus.getMemUsage();
-		String jsonStr=" ";
-		SysStatus s=new SimStatus();
-		s.readStatus();
-		
-		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-		try {
-			jsonStr=mapper.writeValueAsString(s);
-			System.out.println(jsonStr);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("json format error");
-			return;
-		}		
-	}
-	
+	}		
 	public void readStatus(){
 		cpuUsage = ra.nextFloat()*100;
 		memUsage = ra.nextFloat()*100;
