@@ -25,14 +25,14 @@ public class AppProducer implements Callback {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			logger.error("producer.propeties contains errors");
+			logger.error("producer.propeties contains errors.");
 			System.exit(-1);			
 		}
 		int interval = 0;
 		try {
 			interval = Integer.parseInt(props.getProperty("interval"));
 		} catch (NumberFormatException e) {
-			logger.error("interval field is unavailable");
+			logger.error("interval value must be numeric.");
 			System.exit(-1);
 		}
 		String deviceId = props.getProperty("device.id");

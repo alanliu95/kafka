@@ -10,52 +10,28 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class LinuxStatus implements SysStatus {
-	private String ts;
-	private float cpuUsage;
-	private float memUsage;
+public class LinuxStatus extends SysStatus {
 
-	public void setts(String date) {
-		this.ts = date;
+	public LinuxStatus(String deviceId) {
+		super(deviceId);
 	}
-	public void setCpuUsage(float cpuUsage) {
-		this.cpuUsage = cpuUsage;
-	}
-	public void setMemUsage(float memUsage) {
-		this.memUsage = memUsage;
-	}
-
-	public String getts() {
-		return ts;
-	}
-	public float getCpuUsage() {
-		return cpuUsage;
-	}
-	public float getMemUsage() {
-		return memUsage;
-	}
-	public LinuxStatus() {
-		this.ts = "test";
-		this.cpuUsage = 100;
-		this.memUsage = 100;
-	}
-	public static void  main(String Args[]){
-		//SysStatus.getCpuUsage();
-		//SysStatus.getMemUsage();
-		String jsonStr=" ";
-		LinuxStatus s=new LinuxStatus();
-		s.readStatus();
-		
-		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-		try {
-			jsonStr=mapper.writeValueAsString(s);
-			System.out.println(jsonStr);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("json format error");
-			return;
-		}		
-	}
+//	public static void  main(String Args[]){
+//		//SysStatus.getCpuUsage();
+//		//SysStatus.getMemUsage();
+//		String jsonStr=" ";
+//		LinuxStatus s=new LinuxStatus();
+//		s.readStatus();
+//		
+//		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+//		try {
+//			jsonStr=mapper.writeValueAsString(s);
+//			System.out.println(jsonStr);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			System.out.println("json format error");
+//			return;
+//		}		
+//	}
 	
 
 	
@@ -74,12 +50,12 @@ public class LinuxStatus implements SysStatus {
 				e.printStackTrace();
 		}
 		idleUsage = Float.parseFloat(str);
-//		System.out.println(idleUsage);
-		cpuUsage = 100 - idleUsage;
+
+		setCpuUsage(100 - idleUsage);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-		ts = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
-//		System.out.println(date);
-//		System.out.println("CpuUsage:"+cpuUsage);
+		//setTs(df.format(new Date()));
+		setTs(df.format(new Date()));
+
 		
 		long memUsed = 0;
 		long memTotal = 0;
@@ -95,7 +71,7 @@ public class LinuxStatus implements SysStatus {
 		String[] mems = str.split(" ");
 		memTotal = Long.parseLong(mems[0]);
 		memUsed = Long.parseLong(mems[1]);
-		memUsage = (float) memUsed / memTotal * 100;
+		setMemUsage((float) memUsed / memTotal * 100);
 		//System.out.println("MemUsage:"+memUsage);		
 	}
 	public static float readCpuUsage() {

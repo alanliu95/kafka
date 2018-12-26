@@ -15,7 +15,7 @@ public class AppConsumer {
 		props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-		MysqlConn mysql = new MysqlConn();
+		MysqlConn mysql = new MysqlConn("sim1");
 		ObjectMapper mapper = new ObjectMapper();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -31,14 +31,17 @@ public class AppConsumer {
 				}
 			}
 		});
-		consumer.subscribe(Arrays.asList("SysStatus"));
+		consumer.subscribe(Arrays.asList("status"));
+		String s = "\"deviceId\":\"sim1\",\"ts\":\"2018-12-26 15:50:47.324\",\"cpuUsage\":65.93164,\"memUsage\":74.29702";
 		while (true) {
 			ConsumerRecords<String, String> records = consumer.poll(100);
 			for (ConsumerRecord<String, String> record : records) {
 				System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
 				try {
-					LinuxStatus json = mapper.readValue(record.value(), LinuxStatus.class);
-					mysql.insertRecord(json);
+					
+					SysStatus json = mapper.readValue(record.value(), SysStatus.class);  //有问题
+					if(json.getDeviceId().equals("sim1"))
+						mysql.insertRecord(json);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
