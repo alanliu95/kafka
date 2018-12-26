@@ -55,8 +55,7 @@ public class AppProducer implements Callback {
 		int key = 0;
 		String jsonStr;
 		AppProducer app = new AppProducer();
-		while (true) {
-			
+		while (true) {			
 			sysStatus.readStatus();
 			try {
 				jsonStr = mapper.writeValueAsString(sysStatus);
@@ -118,5 +117,4 @@ public class AppProducer implements Callback {
 			logger.debug("The partition offset of the record sent: " + metadata.offset());
 		}
 	}
-
 }
