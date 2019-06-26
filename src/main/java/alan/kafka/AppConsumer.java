@@ -1,5 +1,7 @@
 package alan.kafka;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.logging.log4j.LogManager;
@@ -11,14 +13,21 @@ public class AppConsumer {
 
 	public static void main(String[] args) {
 		Properties props = new Properties();
-		props.put("bootstrap.servers", "alannnn.tpddns.cn:9092");
-		props.put("group.id", "consumer");
-		props.put("enable.auto.commit", "true");
-		props.put("auto.commit.interval.ms", "1000");
-		props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-		props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-		MysqlConn mysql = new MysqlConn();
+		InputStream in = AppProducer.class.getResourceAsStream("/consumer.properties");
+		if (in == null) {
+			logger.error("could find consumer.propeties");
+			System.exit(-1);
+		}
+		try {
+			props.load(in);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error("consumer.propeties contains errors.");
+			System.exit(-1);
+		}
+		KafkaConsumer<String,String> consumer = new KafkaConsumer<>(props);
+		MysqlConn mysql = new MysqlConn(props);
 		ObjectMapper mapper = new ObjectMapper();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -34,15 +43,18 @@ public class AppConsumer {
 				}
 			}
 		});
-		consumer.subscribe(Arrays.asList("status"));
+		String topic=props.getProperty("topic");
+		logger.debug("topic:"+topic);
+		consumer.subscribe(Arrays.asList(topic));
 		while (true) {
 			ConsumerRecords<String, String> records = consumer.poll(100);
 			for (ConsumerRecord<String, String> record : records) {
 				// System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(),
 				// record.key(), record.value());
 				try {
-					SysStatus json = mapper.readValue(record.value(), SysStatus.class); // 有问题
-					mysql.insertRecord(json);
+					SysStatus sysStatus = mapper.readValue(record.value(), SysStatus.class); // 有问题
+					logger.debug("got record:"+sysStatus);
+					mysql.insertRecord(sysStatus);
 
 				} catch (Exception e) {
 					logger.debug("jackson transformation or inserting mysql failed");

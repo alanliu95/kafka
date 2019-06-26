@@ -17,17 +17,18 @@ public class AppProducer implements Callback {
 		Properties props = new Properties();
 		InputStream in = AppProducer.class.getResourceAsStream("/producer.properties");
 		if (in == null) {
-			logger.error("could find producer.propeties");
+			logger.error("not found producer.propeties");
 			System.exit(-1);
 		}
 		try {
 			props.load(in);
-		} catch (IOException e1) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			logger.error("producer.propeties contains errors.");
+			e.printStackTrace();
+			logger.error(" parse failed: producer.propeties.");
 			System.exit(-1);			
 		}
+
 		int interval = 0;
 		try {
 			interval = Integer.parseInt(props.getProperty("interval"));
@@ -35,7 +36,7 @@ public class AppProducer implements Callback {
 			logger.error("interval value must be numeric.");
 			System.exit(-1);
 		}
-		String deviceId = props.getProperty("device.id");
+		String deviceId = props.getProperty("device.token");
 		if (deviceId == null) {
 			logger.error("miss deviceId field");
 			System.exit(-1);
@@ -87,24 +88,6 @@ public class AppProducer implements Callback {
 	}
 
 	@SuppressWarnings("unused")
-	private static void getThreadInfo() {
-		ThreadGroup currentGroup = Thread.currentThread().getThreadGroup();
-		while (currentGroup.getParent() != null) {
-			// 返回此线程组的父线程组
-			currentGroup = currentGroup.getParent();
-		}
-		// 此线程组中活动线程的估计数
-		int noThreads = currentGroup.activeCount();
-		Thread[] lstThreads = new Thread[noThreads];
-		// 把对此线程组中的所有活动子组的引用复制到指定数组中。
-		currentGroup.enumerate(lstThreads);
-		for (Thread thread : lstThreads) {
-			System.out.println("线程数量：" + noThreads + " 线程id：" + thread.getId() + " 线程名称：" + thread.getName() + " 线程状态："
-					+ thread.getState());
-		}
-		return;
-
-	}
 
 	public void onCompletion(RecordMetadata metadata, Exception e) {
 		if (e != null) {

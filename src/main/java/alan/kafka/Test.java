@@ -1,9 +1,5 @@
 package alan.kafka;
 
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +19,15 @@ public class Test {
 		try {
 			SysStatus json = mapper.readValue(s, SysStatus.class); // 有问题
 //			SysStatus json = mapper.readValue(s, SysStatus.class); // 有问题
-			System.out.println(json.getDeviceId());
+			System.out.println(json.getDevToken());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 }
 // public static void main(String Args[]){
-// //SysStatus.getCpuUsage();
-// //SysStatus.getMemUsage();
+// //SysStatus.getCpu();
+// //SysStatus.getMem();
 // String jsonStr=" ";
 // SysStatus s=new SimStatus();
 // s.readStatus();
@@ -114,11 +110,11 @@ public class Test {
 //	}
 //
 //
-//	public String getDeviceId() {
+//	public String getDevToken() {
 //		return deviceId;
 //	}
 //
-//	public void setDeviceId(String deviceId) {
+//	public void setDevToken(String deviceId) {
 //		this.deviceId = deviceId;
 //	}
 //
@@ -130,19 +126,19 @@ public class Test {
 //		this.ts = ts;
 //	}
 //
-//	public float getCpuUsage() {
+//	public float getCpu() {
 //		return cpuUsage;
 //	}
 //
-//	public void setCpuUsage(float cpuUsage) {
+//	public void setCpu(float cpuUsage) {
 //		this.cpuUsage = cpuUsage;
 //	}
 //
-//	public float getMemUsage() {
+//	public float getMem() {
 //		return memUsage;
 //	}
 //
-//	public void setMemUsage(float memUsage) {
+//	public void setMem(float memUsage) {
 //		this.memUsage = memUsage;
 //	}
 //

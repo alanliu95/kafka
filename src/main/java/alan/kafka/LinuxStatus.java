@@ -2,12 +2,8 @@ package alan.kafka;
 
 import java.util.*;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 import java.text.*;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class LinuxStatus extends SysStatus {
@@ -16,8 +12,8 @@ public class LinuxStatus extends SysStatus {
 		super(deviceId);
 	}
 //	public static void  main(String Args[]){
-//		//SysStatus.getCpuUsage();
-//		//SysStatus.getMemUsage();
+//		//SysStatus.getCpu();
+//		//SysStatus.getMem();
 //		String jsonStr=" ";
 //		LinuxStatus s=new LinuxStatus();
 //		s.readStatus();
@@ -51,7 +47,7 @@ public class LinuxStatus extends SysStatus {
 		}
 		idleUsage = Float.parseFloat(str);
 
-		setCpuUsage(100 - idleUsage);
+		setCpu(100 - idleUsage);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		//setTs(df.format(new Date()));
 		setTs(df.format(new Date()));
@@ -71,7 +67,7 @@ public class LinuxStatus extends SysStatus {
 		String[] mems = str.split(" ");
 		memTotal = Long.parseLong(mems[0]);
 		memUsed = Long.parseLong(mems[1]);
-		setMemUsage((float) memUsed / memTotal * 100);
+		setMem((float) memUsed / memTotal * 100);
 		//System.out.println("MemUsage:"+memUsage);		
 	}
 	public static float readCpuUsage() {

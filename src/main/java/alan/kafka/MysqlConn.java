@@ -1,5 +1,7 @@
 package alan.kafka;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Date;
 
@@ -13,9 +15,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 //import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 public class MysqlConn {
-	private static final Logger logger = LogManager.getLogger(AppProducer.class);
+	private static final Logger logger = LogManager.getLogger(MysqlConn.class);
 	public static void main(String args[]) {
 //		MysqlConn mysql = new MysqlConn();
 //		mysql.insertRecord();
@@ -24,13 +27,12 @@ public class MysqlConn {
 	}
 	private Connection con;
 
-	public MysqlConn() {
-		
-		String driver = "com.mysql.jdbc.Driver"; // 驱动程序名		
-		String url = "jdbc:mysql://alannnn.tpddns.cn:3306/cloud"; // URL指向要访问的数据库名
-		String user = "root";
-		String password = "alan";
-		//String tableName;
+	public MysqlConn(Properties props) {
+		String driver = props.getProperty("driver"); // 驱动程序名
+		String url = props.getProperty("url"); // URL指向要访问的数据库名
+		String user = props.getProperty("user");
+		String password = props.getProperty("password");
+		logger.info(""+props);
 		try {
 			// 加载驱动程序
 			Class.forName(driver);
@@ -65,15 +67,15 @@ public class MysqlConn {
 	public void insertRecord(SysStatus record) {
 		PreparedStatement psql;
 		// 预处理添加数据，其中有两个参数--“？”
-		String sql="insert into "+record.getDeviceId()+"(ts,cpu,mem)"; 
+		String sql="insert into "+"records(dev_id, ts, cpu, mem) ";
 		try {
-			psql = con.prepareStatement(sql+ "values(?,?,?)");
+			psql = con.prepareStatement(sql+ "values(?,?,?,?)");
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = simpleDateFormat.parse(record.getTs());
-			psql.setTimestamp(1,new Timestamp(date.getTime()) );
-			psql.setFloat(2, record.getCpuUsage());
-			psql.setFloat(3, record.getMemUsage());
-			//System.out.println(x);
+			psql.setInt(1,1 );//需从devices中查询获取
+			psql.setTimestamp(2,new Timestamp(date.getTime()) );
+			psql.setFloat(3, record.getCpu());
+			psql.setFloat(4, record.getMem());
 			psql.executeUpdate();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -81,5 +83,6 @@ public class MysqlConn {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		logger.debug("insert finish");
 	}
 }

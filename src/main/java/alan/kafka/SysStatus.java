@@ -1,25 +1,25 @@
 package alan.kafka;
 
 //public class SysStatus {
-//	private String deviceId;
+//	private String devToken;
 //	private String ts;
-//	private float cpuUsage;
-//	private float memUsage;
+//	private float cpu;
+//	private float mem;
 //	public  void readStatus() {} //有问题
 //	
-//	public SysStatus(String deviceId, String ts, float cpuUsage, float memUsage) {
-//		this.deviceId = deviceId;
+//	public SysStatus(String devToken, String ts, float cpu, float mem) {
+//		this.devToken = devToken;
 //		this.ts = ts;
-//		this.cpuUsage = cpuUsage;
-//		this.memUsage = memUsage;
+//		this.cpu = cpu;
+//		this.mem = mem;
 //	}
 //
-//	public String getDeviceId() {
-//		return deviceId;
+//	public String getDevToken() {
+//		return devToken;
 //	}
 //
-//	public void setDeviceId(String deviceId) {
-//		this.deviceId = deviceId;
+//	public void setDevToken(String devToken) {
+//		this.devToken = devToken;
 //	}
 //
 //	public String getTs() {
@@ -30,33 +30,33 @@ package alan.kafka;
 //		this.ts = ts;
 //	}
 //
-//	public float getCpuUsage() {
-//		return cpuUsage;
+//	public float getCpu() {
+//		return cpu;
 //	}
 //
-//	public void setCpuUsage(float cpuUsage) {
-//		this.cpuUsage = cpuUsage;
+//	public void setCpu(float cpu) {
+//		this.cpu = cpu;
 //	}
 //
-//	public float getMemUsage() {
-//		return memUsage;
+//	public float getMem() {
+//		return mem;
 //	}
 //
-//	public void setMemUsage(float memUsage) {
-//		this.memUsage = memUsage;
+//	public void setMem(float mem) {
+//		this.mem = mem;
 //	}
 //
-////	public SysStatus(String deviceId) {
-////		this.deviceId=deviceId;	
+////	public SysStatus(String devToken) {
+////		this.devToken=devToken;
 ////	}
 //
 //}
 
 public class SysStatus {
-	private String deviceId;
+	private String devToken;
 	private String ts;
-	private float cpuUsage;
-	private float memUsage;
+	private float cpu;
+	private float mem;
 	
 	public  void readStatus() {} //有问题
 	
@@ -65,25 +65,25 @@ public class SysStatus {
 		
 	}
 	
-	public SysStatus(String deviceId) {
-		this.deviceId=deviceId;
+	public SysStatus(String devToken) {
+		this.devToken = devToken;
 	}
 	
-	public SysStatus(String deviceId, String ts, float cpuUsage, float memUsage) {
+	public SysStatus(String devToken, String ts, float cpu, float mem) {
 		
-		this.deviceId = deviceId;
+		this.devToken = devToken;
 		this.ts = ts;
-		this.cpuUsage = cpuUsage;
-		this.memUsage = memUsage;
+		this.cpu = cpu;
+		this.mem = mem;
 	}
 
 
-	public String getDeviceId() {
-		return deviceId;
+	public String getDevToken() {
+		return devToken;
 	}
 
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
+	public void setDevToken(String devToken) {
+		this.devToken = devToken;
 	}
 
 	public String getTs() {
@@ -94,22 +94,29 @@ public class SysStatus {
 		this.ts = ts;
 	}
 
-	public float getCpuUsage() {
-		return cpuUsage;
+	public float getCpu() {
+		return cpu;
 	}
 
-	public void setCpuUsage(float cpuUsage) {
-		this.cpuUsage = cpuUsage;
+	public void setCpu(float cpu) {
+		this.cpu = cpu;
 	}
 
-	public float getMemUsage() {
-		return memUsage;
+	public float getMem() {
+		return mem;
 	}
 
-	public void setMemUsage(float memUsage) {
-		this.memUsage = memUsage;
+	public void setMem(float mem) {
+		this.mem = mem;
 	}
 
-	
-
+	@Override
+	public String toString() {
+		return "SysStatus{" +
+				"devToken='" + devToken + '\'' +
+				", ts='" + ts + '\'' +
+				", cpu=" + cpu +
+				", mem=" + mem +
+				'}';
+	}
 }
